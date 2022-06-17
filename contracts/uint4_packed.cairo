@@ -2,19 +2,18 @@
 from starkware.cairo.common.cairo_builtins import HashBuiltin, BitwiseBuiltin
 from starkware.cairo.common.alloc import alloc
 from starkware.cairo.common.bool import TRUE
-from starkware.cairo.common.bitwise import bitwise_and, bitwise_or
+from starkware.cairo.common.bitwise import bitwise_and, bitwise_or, ALL_ONES
 from starkware.cairo.common.math_cmp import is_le
 from contracts.pow2 import pow2
 
 const SIZE = 4
-const ALL_ONES = 2 ** 251 - 1
 const MAX = 252
 const MAX_PER_FELT = 62
 
 @view
 func view_get_element_at{
-        bitwise_ptr : BitwiseBuiltin*, syscall_ptr : felt*, pedersen_ptr : HashBuiltin*,
-        range_check_ptr}(input : felt, at : felt) -> (response : felt):
+    bitwise_ptr : BitwiseBuiltin*, syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr
+}(input : felt, at : felt) -> (response : felt):
     let (mask) = generate_get_mask(at)
     let (masked_response) = bitwise_and(mask, input)
     let (divider) = pow2(at * SIZE)
@@ -24,8 +23,8 @@ end
 
 @view
 func view_set_element_at{
-        bitwise_ptr : BitwiseBuiltin*, syscall_ptr : felt*, pedersen_ptr : HashBuiltin*,
-        range_check_ptr}(input : felt, at : felt, element : felt) -> (response : felt):
+    bitwise_ptr : BitwiseBuiltin*, syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr
+}(input : felt, at : felt, element : felt) -> (response : felt):
     assert_valid_felt(element)
     let (mask) = generate_set_mask(at)
     let (masked_intermediate_response) = bitwise_and(mask, input)
@@ -36,7 +35,8 @@ func view_set_element_at{
 end
 
 func generate_get_mask{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr}(
-        at : felt) -> (mask : felt):
+    at : felt
+) -> (mask : felt):
     assert_valid_at(at)
     let (pow_big) = pow2(SIZE * (at + 1))
     let (pow_small) = pow2(SIZE * at)
@@ -45,7 +45,8 @@ func generate_get_mask{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_c
 end
 
 func generate_set_mask{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr}(
-        at : felt) -> (mask : felt):
+    at : felt
+) -> (mask : felt):
     assert_valid_at(at)
     let (pow_big) = pow2(SIZE * (at + 1))
     let (pow_small) = pow2(SIZE * at)
@@ -54,7 +55,8 @@ func generate_set_mask{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_c
 end
 
 func assert_valid_felt{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr}(
-        element : felt):
+    element : felt
+):
     let (max) = pow2(SIZE)
     let (is_bigger) = is_le(element, max - 1)
     with_attr error_message("Error felt too big"):
@@ -73,16 +75,16 @@ func assert_valid_at{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_che
 end
 
 func decompose{
-        bitwise_ptr : BitwiseBuiltin*, syscall_ptr : felt*, pedersen_ptr : HashBuiltin*,
-        range_check_ptr}(felt_to_decompose) -> (arr_len : felt, arr : felt*):
+    bitwise_ptr : BitwiseBuiltin*, syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr
+}(felt_to_decompose) -> (arr_len : felt, arr : felt*):
     alloc_locals
     let (local arr : felt*) = alloc()
     return decompose_recursive(felt_to_decompose, 0, arr)
 end
 
 func decompose_recursive{
-        bitwise_ptr : BitwiseBuiltin*, syscall_ptr : felt*, pedersen_ptr : HashBuiltin*,
-        range_check_ptr}(felt_to_decompose, arr_len, arr : felt*) -> (arr_len : felt, arr : felt*):
+    bitwise_ptr : BitwiseBuiltin*, syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr
+}(felt_to_decompose, arr_len, arr : felt*) -> (arr_len : felt, arr : felt*):
     if arr_len == MAX_PER_FELT:
         return (arr_len, arr)
     end
