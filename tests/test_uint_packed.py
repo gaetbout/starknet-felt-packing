@@ -2,7 +2,7 @@ import os
 
 import pytest
 from utils import assert_revert
-# For bit  calculations I used:
+# For bit calculations I used:
 # https://www.exploringbinary.com/binary-converter/ 
 # https://string-functions.com/length.aspx
 CONTRACT_FILE = os.path.join("contracts", "uint7_packed.cairo")
@@ -11,35 +11,30 @@ CONTRACT_FILE = os.path.join("contracts", "uint7_packed.cairo")
 async def contract(starknet):
     return await starknet.deploy(source=CONTRACT_FILE,)
   
-@pytest.mark.asyncio
-async def test_valid_felt(contract ):
-    await contract.assert_valid_felt(0).invoke()
-  
-@pytest.mark.asyncio
-async def test_valid_felt_limit(contract ):
-    await contract.assert_valid_felt(127).invoke()
   
 @pytest.mark.asyncio
 async def test_join_to_outside(contract):
-    await assert_revert(contract.assert_valid_felt(128).invoke(), "Error felt too big")
+    await assert_revert(contract.view_set_element_at(0,0,128).invoke(), "Error felt too big")
     
 @pytest.mark.asyncio
 async def assert_valid_felt_outside(contract):
-    await assert_revert(contract.generate_get_mask(35).invoke(), "Error out of bound")
+    await assert_revert(contract.view_get_element_at(0,35).invoke(), "Error out of bound")
 
-@pytest.mark.asyncio
-@pytest.mark.parametrize("position, result",[
-    (0,127),
-    (1,16256),
-    (5,4363686772736),
-    (10,149935135831111235534848),
-    (20,177012165013336821185939763789146369453719552),
-    (30,208979078779793167353681086184783514132807454935464642645273346048),
-    (34,56097394306713702464269695648587662877522613725800901920360996891040677888)
-])
-async def test_generate_get_mask(contract, position, result):
-    execution_info = await contract.generate_get_mask(position).invoke()
-    assert execution_info.result.mask == result
+# TODO Figure out how to call that logic without making it a view...
+
+# @pytest.mark.asyncio
+# @pytest.mark.parametrize("position, result",[
+#     (0,127),
+#     (1,16256),
+#     (5,4363686772736),
+#     (10,149935135831111235534848),
+#     (20,177012165013336821185939763789146369453719552),
+#     (30,208979078779793167353681086184783514132807454935464642645273346048),
+#     (34,56097394306713702464269695648587662877522613725800901920360996891040677888)
+# ])
+# async def test_generate_get_mask(contract, position, result):
+#     execution_info = await contract.generate_get_mask(position).invoke()
+#     assert execution_info.result.mask == result
 
 
 @pytest.mark.asyncio

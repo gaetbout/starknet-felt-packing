@@ -12,7 +12,10 @@ The idea of this library is to be able to store multiple smaller felts into a 1 
   + pow 2 use
   + 251 useable bits
   + how to calculate how much we'll be able to store 251 // 8 = quotient, remainder
+
+# TODO
   + modular system?
+  + namespace
 
 
 # 🌡️ Test
