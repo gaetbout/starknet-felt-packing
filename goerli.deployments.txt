@@ -1,2 +1,0 @@
-0x02a53dafd1a823d096477b63d1d708cf1dccafaa0711d6b1646310f4d71d70fe:artifacts/abis/r_place.json:contract
-0x008eed79fe4a0661314663f525914875824d166da1d8949fe5fd8737d83951d9:artifacts/abis/contract.json:s_place
