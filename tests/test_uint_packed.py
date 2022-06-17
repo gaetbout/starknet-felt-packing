@@ -18,7 +18,7 @@ async def test_join_to_outside(contract):
     
 @pytest.mark.asyncio
 async def assert_valid_felt_outside(contract):
-    await assert_revert(contract.get_element_at(0,35).invoke(), "Error out of bound")
+    await assert_revert(contract.get_element_at(0,35).invoke(), "Error out of bound at 35")
 
 # TODO Figure out how to call that logic without making it a view...
 
