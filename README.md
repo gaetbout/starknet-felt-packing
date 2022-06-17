@@ -21,7 +21,7 @@ The idea of this library is to be able to store multiple smaller felts into a 1 
 To run the test suite, copy this repository and put yourself at the root.  
 Compile the contracts using `make build` or `nile compile`.  
 Run the tests using `make test` or, for more details, `pytest -v`.   
-For more  details check the Actions tab of this GitHub repository.
+For more  details check the Actions tab of this GitHub repository. 
 
 
 # 📄 License
