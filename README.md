@@ -16,6 +16,8 @@ The idea of this library is to be able to store multiple smaller felts into a 1 
 # TODO
   + modular system?
   + namespace
+  + doc
+  + make an interface
 
 
 # 🌡️ Test
