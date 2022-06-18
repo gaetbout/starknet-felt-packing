@@ -45,7 +45,7 @@ async def assert_valid_felt_outside(contract):
     (56097394306713702464269695648587662877522613725800901920360996891040677888, 34, 127),
     (28711264802648745355728584387072425882196613324228808069476100771005071360, 34, 65)
 ])
-async def test_view_get_element_at(contract, input, position, result):
+async def test_get_element_at(contract, input, position, result):
     execution_info = await contract.get_element_at(input, position).invoke()
     assert execution_info.result.response == result
 
@@ -60,7 +60,7 @@ async def test_view_get_element_at(contract, input, position, result):
     (0,30,127,208979078779793167353681086184783514132807454935464642645273346048),
     (0,34,127,56097394306713702464269695648587662877522613725800901920360996891040677888),
 ])
-async def test_view_set_element_at(contract, input, position, element, result):
+async def test_set_element_at(contract, input, position, element, result):
     execution_info = await contract.set_element_at(input, position, element).invoke()
     assert execution_info.result.response == result
 
@@ -70,6 +70,6 @@ async def test_view_set_element_at(contract, input, position, element, result):
     (56097394306713702464269695648587662877522613725800901920360996891040677888,34,0,0),
     (56097394306713702464269695648587662877522613725800901920360996891040677888,33,12,56138804784794445846994304183761325030237320379633924239691972036383473664),
 ])
-async def test_view_set_element_at_with_previous_value(contract, input, position, element, result):
+async def test_set_element_at_with_previous_value(contract, input, position, element, result):
     execution_info = await contract.set_element_at(input, position, element).invoke()
     assert execution_info.result.response == result

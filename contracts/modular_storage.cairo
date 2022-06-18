@@ -11,7 +11,7 @@ const HOP_LIMIT_SIZE = 8
 # total bits used: 4 + 8 + 20 + 16 + 8 + 8 = 64
 
 @view
-func encode{
+func encode_packet_header{
     bitwise_ptr : BitwiseBuiltin*, syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr
 }(
     version : felt,
@@ -21,12 +21,35 @@ func encode{
     next_header : felt,
     hop_limit : felt,
 ) -> (response : felt):
-    return bits_manipulation.actual_get_element_at(1, 0, 0)
+    # Instead of summing each index, you can also manually compute each index and hardcode them
+    let (v1) = bits_manipulation.actual_set_element_at(0, 0, VERSION_SIZE, version)
+    let (v2) = bits_manipulation.actual_set_element_at(
+        v1, VERSION_SIZE, TRAFFIC_CLASS_SIZE, traffic_class
+    )
+    let (v3) = bits_manipulation.actual_set_element_at(
+        v2, VERSION_SIZE + TRAFFIC_CLASS_SIZE, FLOW_LABEL_SIZE, flow_label
+    )
+    let (v4) = bits_manipulation.actual_set_element_at(
+        v3, VERSION_SIZE + TRAFFIC_CLASS_SIZE + FLOW_LABEL_SIZE, PAYLOAD_LENGTH_SIZE, payload_length
+    )
+    let (v5) = bits_manipulation.actual_set_element_at(
+        v4,
+        VERSION_SIZE + TRAFFIC_CLASS_SIZE + FLOW_LABEL_SIZE + PAYLOAD_LENGTH_SIZE,
+        NEXT_HEADER_SIZE,
+        next_header,
+    )
+    let (v6) = bits_manipulation.actual_set_element_at(
+        v5,
+        VERSION_SIZE + TRAFFIC_CLASS_SIZE + FLOW_LABEL_SIZE + PAYLOAD_LENGTH_SIZE + NEXT_HEADER_SIZE,
+        HOP_LIMIT_SIZE,
+        hop_limit,
+    )
+    return (v6)
 end
 
 @view
-func decode{
+func decode_packet_header{
     bitwise_ptr : BitwiseBuiltin*, syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr
 }(input : felt, at : felt, element : felt) -> (response : felt):
-    return bits_manipulation.actual_set_element_at(input, at, element, BITS_SIZE)
+    return bits_manipulation.actual_set_element_at(input, at, element, 12)
 end
