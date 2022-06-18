@@ -19,10 +19,9 @@ async def contract(starknet):
 
 @pytest.mark.asyncio
 @pytest.mark.parametrize("version, traffic_class, flow_label, payload_length, next_header, hop_limit, result",[
-    (10, 177, 654321, 33781, 32, 99, 1792577742663785242),
+    (10, 177, 654321, 33781, 32, 99, 7142854099979934490),
 ])
 async def test_view_get_element_at(contract, version, traffic_class, flow_label, payload_length, next_header, hop_limit, result):
     execution_info = await contract.encode_packet_header(version, traffic_class, flow_label, payload_length, next_header, hop_limit).invoke()
     assert execution_info.result.response == result
-
 
