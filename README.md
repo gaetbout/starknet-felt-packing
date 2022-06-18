@@ -4,7 +4,10 @@
 Uint128, Uint256, Uint1024. Ok I get it... We  can do big integers.  
 But why not going smaller, what about uint8, uint16, ...  
 
-The idea of this library is to be able to store multiple smaller felts into a 1 felt. As an example it is possible to store 62 felt of size 8 bits (0-255) into 1 felt that you'd store in a storage var. To show this is working, an example of such an application is existing [here](https://github.com/gaetbout/starknet-s-place) with a contract deployed on testnet and a webiste deployed on IPFS.
+The idea of this library is to be able to store multiple smaller felts into a 1 felt. As an example it is possible to store 62 felt of size 8 bits (0-255) into 1 felt that you'd store in a storage var. To show this is working, an example of such an application is existing [here](https://github.com/gaetbout/starknet-s-place) with a contract deployed on testnet and a webiste deployed on IPFS.  
+In the [contracts folder](/contracts/) you have 2 examples on how this library can be used.  
+One is simply to encode an arbitrary number of uint7 into a felt (max 35 in that case).  
+The other file is done to how how to make it a bit more modular and encode stuff not having all the same length. For that example, I picked the [IPV6 packet header](https://en.wikipedia.org/wiki/IPv6_packet). I removed the addresses because it was starting to be a lot of fields (also because a packet would then require to be encoded on two felts, see **Bits available**).
 
 # Technical explanation
 ## Bits available
@@ -14,7 +17,7 @@ In [Cairo](https://www.cairo-lang.org/docs/) we only have access (so far) to fel
 P = 2<sup>251</sup> + 17 . 2<sup>192</sup> + 1  
 And all the calculation are done using a module of this number (see [here](https://www.cairo-lang.org/docs/how_cairo_works/cairo_intro.html) for me info). From that we can't use all 252 bits as we would like because the moment we'll have a number bigger than this prime number it'll automatically be changed to fit within the range. so we effectively have 251 bits we can use.  
 
-## Let's play
+## Some important notes
 Ok, so now that we know how many bits we can use, how to use them?  
 The whole trick is to use bitwise operations. And to do so we need to compute a mask andthen apply some bitwise operation.  
 Before jumping into the actual logic, I have to specify that, at the moment, the steps for the bitwise operations are quite high: 12.8 gas/application (see [here](https://docs.starknet.io/docs/Fees/fee-mechanism/)). So for the decompose case it can reach the max steps limit, but it'll be explain there.  
@@ -32,7 +35,7 @@ Now that we reset tthat part, we can proceed with setting the new number: 24 (11
 24 . (2<sup>5</sup>) = 24 . 32 = 768 (11000 00000). Once we have this number we can proceed to the last part and perform the bitwise operation **or (|)**:
 
       10111 00000 11011
-    |       11000 00000
+    | 00000 11000 00000
       _________________
       10111 11000 11011
 This result is the new felt to be returned to the user: 24347 (10111 11000 11011) which encodes 23 (10111), 24 (11000) and 27 (11011).
