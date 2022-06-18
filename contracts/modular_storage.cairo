@@ -50,6 +50,35 @@ end
 @view
 func decode_packet_header{
     bitwise_ptr : BitwiseBuiltin*, syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr
-}(input : felt, at : felt, element : felt) -> (response : felt):
-    return bits_manipulation.actual_set_element_at(input, at, element, 12)
+}(input : felt) -> (
+    version : felt,
+    traffic_class : felt,
+    flow_label : felt,
+    payload_length : felt,
+    next_header : felt,
+    hop_limit : felt,
+):
+    alloc_locals
+    # Instead of summing each index, you can also manually compute each index and hardcode them
+    let (version) = bits_manipulation.actual_get_element_at(input, 0, VERSION_SIZE)
+    let (traffic_class) = bits_manipulation.actual_get_element_at(
+        input, VERSION_SIZE, TRAFFIC_CLASS_SIZE
+    )
+    let (flow_label) = bits_manipulation.actual_get_element_at(
+        input, VERSION_SIZE + TRAFFIC_CLASS_SIZE, FLOW_LABEL_SIZE
+    )
+    let (payload_length) = bits_manipulation.actual_get_element_at(
+        input, VERSION_SIZE + TRAFFIC_CLASS_SIZE + FLOW_LABEL_SIZE, PAYLOAD_LENGTH_SIZE
+    )
+    let (next_header) = bits_manipulation.actual_get_element_at(
+        input,
+        VERSION_SIZE + TRAFFIC_CLASS_SIZE + FLOW_LABEL_SIZE + PAYLOAD_LENGTH_SIZE,
+        NEXT_HEADER_SIZE,
+    )
+    let (hop_limit) = bits_manipulation.actual_get_element_at(
+        input,
+        VERSION_SIZE + TRAFFIC_CLASS_SIZE + FLOW_LABEL_SIZE + PAYLOAD_LENGTH_SIZE + NEXT_HEADER_SIZE,
+        HOP_LIMIT_SIZE,
+    )
+    return (version, traffic_class, flow_label, payload_length, next_header, hop_limit)
 end

@@ -21,7 +21,15 @@ async def contract(starknet):
 @pytest.mark.parametrize("version, traffic_class, flow_label, payload_length, next_header, hop_limit, result",[
     (10, 177, 654321, 33781, 32, 99, 7142854099979934490),
 ])
-async def test_view_get_element_at(contract, version, traffic_class, flow_label, payload_length, next_header, hop_limit, result):
+async def test_encode_packet_header(contract, version, traffic_class, flow_label, payload_length, next_header, hop_limit, result):
     execution_info = await contract.encode_packet_header(version, traffic_class, flow_label, payload_length, next_header, hop_limit).invoke()
     assert execution_info.result.response == result
+
+@pytest.mark.asyncio
+@pytest.mark.parametrize("input, version, traffic_class, flow_label, payload_length, next_header, hop_limit ",[
+    (7142854099979934490, 10, 177, 654321, 33781, 32, 99),
+])
+async def test_decode_packet_header(contract, input, version, traffic_class, flow_label, payload_length, next_header, hop_limit):
+    execution_info = await contract.decode_packet_header(input).invoke()
+    assert execution_info.result == (version, traffic_class, flow_label, payload_length, next_header, hop_limit)
 

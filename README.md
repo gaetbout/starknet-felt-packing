@@ -100,7 +100,7 @@ I chose to use the second option because I'm assuming it is less expensive to 2 
 We now have the value 992 (11111 00000) that can be returned to the user.
 
 ## Decompose
-This function has for purpose to decompose a felt into all the felts that compose it. To stay on the same example, if you give it 24347 and with a bit size of five, it'll return an array: [27, 24, 23]. It'll extract the value from right to left.  
+This function that exists on the [uint7_packed file](contracts/uint7_packed.cairo) version of  has for purpose to decompose a felt into all the felts that compose it. To stay on the same example, if you give it 24347 and with a bit size of five, it'll return an array: [27, 24, 23]. It'll extract the value from right to left.  
 Be careful also not to try and decompose too much felts as it can hit the steps limit. Atfer some tests, I found out that this limit can bit hit if you try and decompose ~8300 smaller felts.  
 For the other project I did, I had to use some offset to and decompose the felts batch by batch and not hit that ceiling (and also to reduce the loading time). You can find such an implementation [here].(https://github.com/gaetbout/starknet-s-place/blob/main/contracts/s_place.cairo#L52)
 
