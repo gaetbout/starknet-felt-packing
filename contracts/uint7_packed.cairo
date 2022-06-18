@@ -3,7 +3,7 @@ from starkware.cairo.common.cairo_builtins import HashBuiltin, BitwiseBuiltin
 from contracts.bits_manipulation import external as bits_manipulation
 
 const BITS_SIZE = 7
-const MAX_PER_FELT = 35
+const MAX_PER_FELT = 35  # 251 // 7 = qutotient=35
 
 @view
 func get_element_at{

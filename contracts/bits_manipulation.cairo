@@ -67,11 +67,7 @@ namespace internal:
     func generate_get_mask{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr}(
         position : felt, number_of_bits : felt
     ) -> (mask : felt):
-        assert_valid_at(position, number_of_bits)
-        let (pow_big) = pow2(number_of_bits * (position + 1))
-        let (pow_small) = pow2(number_of_bits * position)
-        let mask = (pow_big - 1) - (pow_small - 1)
-        return (mask)
+        return internal.generate_mask(position, number_of_bits)
     end
 
     # @notice Will generate a bit mask to be able to insert a felt within another felt
@@ -82,10 +78,23 @@ namespace internal:
     func generate_set_mask{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr}(
         position : felt, number_of_bits : felt
     ) -> (mask : felt):
+        let (intermediate_mask) = internal.generate_mask(position, number_of_bits)
+        let mask = ALL_ONES - intermediate_mask
+        return (mask)
+    end
+
+    # @notice Will generate the mask part that is common to set_mask and get_mask
+    # @dev Will fail if the position given would make it out of the 251 available bits
+    # @param position: The position of the element that needs to be inserted, starts a 0
+    # @param number_of_bits: the max number of bits on which the element will have to be encoded
+    # @return mask: the mask corresponding to the position and the number of bits
+    func generate_mask{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr}(
+        position : felt, number_of_bits : felt
+    ) -> (mask : felt):
         assert_valid_at(position, number_of_bits)
         let (pow_big) = pow2(number_of_bits * (position + 1))
         let (pow_small) = pow2(number_of_bits * position)
-        let mask = ALL_ONES - (pow_big - 1) + (pow_small - 1)
+        let mask = (pow_big - 1) - (pow_small - 1)
         return (mask)
     end
 
@@ -119,10 +128,12 @@ namespace internal:
         return ()
     end
 
-    # @notice
-    # @dev
-    # @param
-    # @param
+    # @notice Is is the recursive part of the decompose method. It'll stop whenever it decompose element_number_max of items.
+    # @param felt_to_decompose: the felt from which every smaller felt needs to be extracted from
+    # @param arr_len: the number of decomposed felt at each step
+    # @param arr: the array containing all felt decomposed at each step
+    # @param number_of_bits: the number of bits on which each felt to extract is encoded
+    # @param element_number_max: the amount of felt to extract
     # @return
     func decompose_recursive{
         bitwise_ptr : BitwiseBuiltin*,
