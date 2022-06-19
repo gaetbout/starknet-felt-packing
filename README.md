@@ -115,10 +115,8 @@ Which means that you can store 25 of these numbers in one felt and 1 bit will st
 So this storage will use 99.6016% of the entire felt.
 
 # TODO
-  + modular system?
-  + doc
-  + Just as there is decompose,  should there be encodeAll?
   + make an interface
+  + make a test for the bits_manipulation class that could test every single bit
 
 
 # 🌡️ Test
