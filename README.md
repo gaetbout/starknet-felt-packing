@@ -128,7 +128,7 @@ For more  details check the Actions tab of this GitHub repository.
 
 # 📄 License
 
-**starknet-s-place** is released under the [MIT](LICENSE).
+**starknet-felt-packing** is released under the [MIT](LICENSE).
 
 
 
