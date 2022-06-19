@@ -5,7 +5,7 @@ from utils import assert_revert
 # For bit calculations I used:
 # https://www.exploringbinary.com/binary-converter/ 
 # https://string-functions.com/length.aspx
-CONTRACT_FILE = os.path.join("contracts", "Felt_packer.cairo")
+CONTRACT_FILE = os.path.join("contracts", "bits_manipulation.cairo")
 
 @pytest.fixture(scope="session")
 async def contract(starknet):

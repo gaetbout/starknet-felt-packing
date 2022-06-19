@@ -1,6 +1,6 @@
 %lang starknet
 from starkware.cairo.common.cairo_builtins import HashBuiltin, BitwiseBuiltin
-from contracts.Felt_packer import external as felt_packer
+from contracts.bits_manipulation import external as bits_manipulation
 
 const VERSION_SIZE = 4
 const TRAFFIC_CLASS_SIZE = 8
@@ -22,23 +22,23 @@ func encode_packet_header{
     hop_limit : felt,
 ) -> (response : felt):
     # Instead of summing each index, you can also manually compute each index and hardcode them
-    let (v1) = felt_packer.actual_set_element_at(0, 0, VERSION_SIZE, version)
-    let (v2) = felt_packer.actual_set_element_at(
+    let (v1) = bits_manipulation.actual_set_element_at(0, 0, VERSION_SIZE, version)
+    let (v2) = bits_manipulation.actual_set_element_at(
         v1, VERSION_SIZE, TRAFFIC_CLASS_SIZE, traffic_class
     )
-    let (v3) = felt_packer.actual_set_element_at(
+    let (v3) = bits_manipulation.actual_set_element_at(
         v2, VERSION_SIZE + TRAFFIC_CLASS_SIZE, FLOW_LABEL_SIZE, flow_label
     )
-    let (v4) = felt_packer.actual_set_element_at(
+    let (v4) = bits_manipulation.actual_set_element_at(
         v3, VERSION_SIZE + TRAFFIC_CLASS_SIZE + FLOW_LABEL_SIZE, PAYLOAD_LENGTH_SIZE, payload_length
     )
-    let (v5) = felt_packer.actual_set_element_at(
+    let (v5) = bits_manipulation.actual_set_element_at(
         v4,
         VERSION_SIZE + TRAFFIC_CLASS_SIZE + FLOW_LABEL_SIZE + PAYLOAD_LENGTH_SIZE,
         NEXT_HEADER_SIZE,
         next_header,
     )
-    let (v6) = felt_packer.actual_set_element_at(
+    let (v6) = bits_manipulation.actual_set_element_at(
         v5,
         VERSION_SIZE + TRAFFIC_CLASS_SIZE + FLOW_LABEL_SIZE + PAYLOAD_LENGTH_SIZE + NEXT_HEADER_SIZE,
         HOP_LIMIT_SIZE,
@@ -60,20 +60,22 @@ func decode_packet_header{
 ):
     alloc_locals
     # Instead of summing each index, you can also manually compute each index and hardcode them
-    let (version) = felt_packer.actual_get_element_at(input, 0, VERSION_SIZE)
-    let (traffic_class) = felt_packer.actual_get_element_at(input, VERSION_SIZE, TRAFFIC_CLASS_SIZE)
-    let (flow_label) = felt_packer.actual_get_element_at(
+    let (version) = bits_manipulation.actual_get_element_at(input, 0, VERSION_SIZE)
+    let (traffic_class) = bits_manipulation.actual_get_element_at(
+        input, VERSION_SIZE, TRAFFIC_CLASS_SIZE
+    )
+    let (flow_label) = bits_manipulation.actual_get_element_at(
         input, VERSION_SIZE + TRAFFIC_CLASS_SIZE, FLOW_LABEL_SIZE
     )
-    let (payload_length) = felt_packer.actual_get_element_at(
+    let (payload_length) = bits_manipulation.actual_get_element_at(
         input, VERSION_SIZE + TRAFFIC_CLASS_SIZE + FLOW_LABEL_SIZE, PAYLOAD_LENGTH_SIZE
     )
-    let (next_header) = felt_packer.actual_get_element_at(
+    let (next_header) = bits_manipulation.actual_get_element_at(
         input,
         VERSION_SIZE + TRAFFIC_CLASS_SIZE + FLOW_LABEL_SIZE + PAYLOAD_LENGTH_SIZE,
         NEXT_HEADER_SIZE,
     )
-    let (hop_limit) = felt_packer.actual_get_element_at(
+    let (hop_limit) = bits_manipulation.actual_get_element_at(
         input,
         VERSION_SIZE + TRAFFIC_CLASS_SIZE + FLOW_LABEL_SIZE + PAYLOAD_LENGTH_SIZE + NEXT_HEADER_SIZE,
         HOP_LIMIT_SIZE,
