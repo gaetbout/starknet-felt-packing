@@ -114,10 +114,6 @@ Which means that you can store 25 of these numbers in one felt and 1 bit will st
 ((10*25) / 251) . 100 = 99.6016%  
 So this storage will use 99.6016% of the entire felt.
 
-# TODO
-  + make an interface
-  + make a test for the bits_manipulation class that could test every single bit
-
 
 # 🌡️ Test
 
