@@ -10,6 +10,12 @@ from contracts.pow2 import pow2
 # @notice Manipulate the bits to be able to encode and decode felts within another felt, for more info refer to the README
 #
 namespace external:
+    # @notice Will return the number encoded at for a certain number of bits
+    # @dev This metod can fail
+    # @param input: The felt from which it needs to be extracted from
+    # @param at: The position of the element that needs to be extracted, starts a 0
+    # @param number_of_bits: The size of the element that needs to be extracted
+    # @return response: The felt that was extracted at the position asked, on the number of bits asked
     @view
     func actual_get_element_at{
         bitwise_ptr : BitwiseBuiltin*,
@@ -24,6 +30,13 @@ namespace external:
         return (response)
     end
 
+    # @notice Will return the a new felt with the felt encoded at a certain position on a certain number of bits
+    # @dev This metod can fail
+    # @param input: The felt from which it needs to be included in
+    # @param at: The position of the element that needs to be extracted, starts a 0
+    # @param number_of_bits: The size of the element that needs to be extracted
+    # @param element: The element that needs to be encoded
+    # @return response: The new felt containing the encoded value a the given position on the given number of bits
     @view
     func actual_set_element_at{
         bitwise_ptr : BitwiseBuiltin*,

@@ -2,6 +2,7 @@ node.json
 accounts.json
 artifacts
 tests/__pycache__
+tests/examples/__pycache__
 goerli.deployments.txt
 .vscode
 
