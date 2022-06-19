@@ -20,23 +20,6 @@ async def test_join_to_outside(contract):
 async def assert_valid_felt_outside(contract):
     await assert_revert(contract.get_element_at(0,35).invoke(), "Error out of bound at 35")
 
-# TODO Figure out how to call that logic without making it a view...
-
-# @pytest.mark.asyncio
-# @pytest.mark.parametrize("position, result",[
-#     (0,127),
-#     (1,16256),
-#     (5,4363686772736),
-#     (10,149935135831111235534848),
-#     (20,177012165013336821185939763789146369453719552),
-#     (30,208979078779793167353681086184783514132807454935464642645273346048),
-#     (34,56097394306713702464269695648587662877522613725800901920360996891040677888)
-# ])
-# async def test_generate_get_mask(contract, position, result):
-#     execution_info = await contract.generate_get_mask(position).invoke()
-#     assert execution_info.result.mask == result
-
-
 @pytest.mark.asyncio
 @pytest.mark.parametrize("input, position, result",[
     (129,0,1),
