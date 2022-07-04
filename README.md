@@ -18,12 +18,11 @@ P = 2<sup>251</sup> + 17 . 2<sup>192</sup> + 1
 And all the calculation are done using a modulo of this number (see [here](https://www.cairo-lang.org/docs/how_cairo_works/cairo_intro.html) for more info).  
 Starting from that fact, we can't use all 252 bits as we would like because the moment we'll have a number bigger than this prime number it'll automatically be changed to fit within the range. so we effectively have 251 bits we can use.  
 
-## Some important notes
+## Important note
 This whole library rests on using bitwise operations with the correct mask.  
 Before jumping into the actual logic, it is important to note that at the moment the steps for the bitwise operations are quite high: 12.8 gas/application (see [here](https://docs.starknet.io/docs/Fees/fee-mechanism/)).  
 In some cases, for example when trying to get all felt within another felt (decompose) it can reach the max steps limit, but it'll be explain there.  
 
-It is also important to explain the reason of the [pow2.cairo file](/contracts/pow2.cairo). Since the algorithm often had to deal with power of 2 to create masks or compute multiplier and divider to do some bit shifting, it is more efficient to store them and access them in O(1) than computing them each time we need to. So this file is there to represent all power of 2 up to 251.  
 
 ## Encoding
 Let's assume you have the 3 numbers 23 (10111), 4 (100) and 27 (11011). To make it simple let's also assume every numbers uses 5 bits so 100 (4) becomes 00100 (still 4). If you put all those numbers one after the other you obtain 10111 00100 11011 which when turn back into a number is **31899**. Now we need to change the value 4 to 24 (11000). To do that you first need to reset the bits allocated for the 4: 10111 **00100** 11011.
@@ -105,6 +104,20 @@ We now have the value 992 (11111 00000) that can be returned to the user.
 This function that exists on the [uint7_packed file](contracts/examples/uint7_packed.cairo) version of  has for purpose to decompose a felt into all the felts that compose it. To stay on the same example, if you give it 24347 and with a bit size of five, it'll return an array: [27, 24, 23]. It'll extract the value from right to left.  
 Be careful also not to try and decompose too much felts as it can hit the steps limit. Atfer some tests, I found out that this limit can bit hit if you try and decompose ~8300 smaller felts.  
 For the other project I did, I had to use some offset to and decompose the felts batch by batch and not hit that ceiling (and also to reduce the loading time). You can find such an implementation [here].(https://github.com/gaetbout/starknet-s-place/blob/main/contracts/s_place.cairo#L52)
+
+
+## Performance
+For this part you can refer to all the contracts done in the [performance folder](./contracts/performance).  
+I deployed them and made some transactions to fetch their steps using:
+
+      $ starknet invoke --address ${CONTRACT_ADDRESS} --abi contract_abi.json -function simple_pow -inputs 10
+      $ starknet get_transaction_receipt --hash ${TRANSACTION_HASH}
+Then there is a section saying the number of steps used (execution_resources.n_steps).  
+All the choices described in this section lead to the way this library is done.
+### Pow2 file
+Contract address: [0x07a3995ebf3785128978d2cfeff173c9f0aaa06116d292a51166108dab55734e](https://goerli.voyager.online/contract/0x07a3995ebf3785128978d2cfeff173c9f0aaa06116d292a51166108dab55734e#readContract).  
+This contract is there to avoid some more complexity in the calculation of power of 2. Since the algorithm often has to deal with power of 2 to create masks or compute multiplier and divider to do some bit shifting, it is more efficient to store them and access them in O(1) than computing them each time we need it is required.  
+Using the [pow function](https://github.com/starkware-libs/cairo-lang/blob/master/src/starkware/cairo/common/pow.cairo) of starkware will increase the number of steps per calculation. For example 2<sup>10</sup> uses 316 steps and, 2<sup>20</sup> uses 321 steps. While getting getting any power of two from the [pow2.cairo file](/contracts/pow2.cairo) is always 281 steps.  
 
 ## Storage efficiency 
 To know the efficiency of the storage we need to know only on thing which is the number of bits on which your numbers will be encoded.  
