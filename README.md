@@ -106,7 +106,7 @@ Be careful also not to try and decompose too much felts as it can hit the steps 
 For the other project I did, I had to use some offset to and decompose the felts batch by batch and not hit that ceiling (and also to reduce the loading time). You can find such an implementation [here].(https://github.com/gaetbout/starknet-s-place/blob/main/contracts/s_place.cairo#L52)
 
 
-## Performance
+# Performance
 For this part you can refer to all the contracts done in the [performance folder](./contracts/performance).  
 I deployed them and made some transactions to fetch their steps using:
 
@@ -114,10 +114,12 @@ I deployed them and made some transactions to fetch their steps using:
       $ starknet get_transaction_receipt --hash ${TRANSACTION_HASH}
 Then there is a section saying the number of steps used (execution_resources.n_steps).  
 All the choices described in this section lead to the way this library is done.
-### Pow2 file
+## Pow2 file
 Contract address: [0x07a3995ebf3785128978d2cfeff173c9f0aaa06116d292a51166108dab55734e](https://goerli.voyager.online/contract/0x07a3995ebf3785128978d2cfeff173c9f0aaa06116d292a51166108dab55734e#readContract).  
 This contract is there to avoid some more complexity in the calculation of power of 2. Since the algorithm often has to deal with power of 2 to create masks or compute multiplier and divider to do some bit shifting, it is more efficient to store them and access them in O(1) than computing them each time we need it is required.  
 Using the [pow function](https://github.com/starkware-libs/cairo-lang/blob/master/src/starkware/cairo/common/pow.cairo) of starkware will increase the number of steps per calculation. For example 2<sup>10</sup> uses 316 steps and, 2<sup>20</sup> uses 321 steps. While getting getting any power of two from the [pow2.cairo file](/contracts/pow2.cairo) is always 281 steps.  
+
+ONGOING SECTION 
 
 ## Storage efficiency 
 To know the efficiency of the storage we need to know only on thing which is the number of bits on which your numbers will be encoded.  
