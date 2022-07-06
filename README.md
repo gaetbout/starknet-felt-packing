@@ -62,7 +62,7 @@ The other way would avoid making that mutliplication would be to
       32 - 1 = 31 (11111) # Make minus 1
       1023 - 31 = 992 (11111 00000) # Remove the last 5 positive bits 
 
-I chose to use the second option because I'm assuming it is less expensive to do 2 fetch in O(1) to pow2 and 1 substraction then to do 1 fetch to pow2 then a multiplication, knowing that this multiplication can be big if for example the user has to modify the bits going from 245 to 250.  
+I chose to use the second option. See the Performance part for more insights. 
 Now that we have the value 992 we can proceed to the last part which is substracting it from the all ones value:
 
       11111 11111 11111 - 11111 00000 = 11111 00000 11111
@@ -97,7 +97,8 @@ The other way would avoid making that mutliplication would be to
       32 - 1 = 31 (11111) # Make minus 1
       1023 - 31 = 992 (11111 00000) # Remove the last 5 positive bits 
 
-I chose to use the second option because I'm assuming it is less expensive to 2 fetch in O(1) to pow2 and 1 substraction then 1 fetch to pow2 then a multiplication, knowing that this multiplication can be big if for example the user has to modify the bits going from 245 to 250.  
+
+I chose to use the second option. See the Performance part for more insights.
 We now have the value 992 (11111 00000) that can be returned to the user.
 
 ## Decompose
@@ -110,14 +111,32 @@ For the other project I did, I had to use some offset to and decompose the felts
 For this part you can refer to all the contracts done in the [performance folder](./contracts/performance).  
 I deployed them and made some transactions to fetch their steps using:
 
-      $ starknet invoke --address ${CONTRACT_ADDRESS} --abi contract_abi.json -function simple_pow -inputs 10
+      $ starknet invoke --address ${CONTRACT_ADDRESS} --abi ${contract_abi.json} -function ${function_name} -inputs 10
       $ starknet get_transaction_receipt --hash ${TRANSACTION_HASH}
 Then there is a section saying the number of steps used (execution_resources.n_steps).  
-All the choices described in this section lead to the way this library is done.
+All the choices described in this section lead to the way this library is done.  
+More info about starknet fee mechanism [here](https://docs.starknet.io/docs/Fees/fee-mechanism/).
 ## Pow2 file
 Contract address: [0x07a3995ebf3785128978d2cfeff173c9f0aaa06116d292a51166108dab55734e](https://goerli.voyager.online/contract/0x07a3995ebf3785128978d2cfeff173c9f0aaa06116d292a51166108dab55734e#readContract).  
 This contract is there to avoid some more complexity in the calculation of power of 2. Since the algorithm often has to deal with power of 2 to create masks or compute multiplier and divider to do some bit shifting, it is more efficient to store them and access them in O(1) than computing them each time we need it is required.  
-Using the [pow function](https://github.com/starkware-libs/cairo-lang/blob/master/src/starkware/cairo/common/pow.cairo) of starkware will increase the number of steps per calculation. For example 2<sup>10</sup> uses 316 steps and, 2<sup>20</sup> uses 321 steps. While getting getting any power of two from the [pow2.cairo file](/contracts/pow2.cairo) is always 281 steps.  
+Using the [pow function](https://github.com/starkware-libs/cairo-lang/blob/master/src/starkware/cairo/common/pow.cairo) of starkware will increase the number of steps per calculation:
+ - 2<sup>10</sup>: 316 steps
+ - 2<sup>20</sup>: 321 steps
+ - 2<sup>100</sup>: 332 steps
+ - 2<sup>200</sup>: 337 steps
+
+As we can see the costs aren't linear but we can do better. Getting any power of two from the [pow2.cairo file](/contracts/pow2.cairo) is always 281 steps.  
+
+## Mask creation
+Contract address: [0x014cceed3a4723314d2e26e45072898691c59f22f83865c84f1721406c66b5f1](https://goerli.voyager.online/contract/0x014cceed3a4723314d2e26e45072898691c59f22f83865c84f1721406c66b5f1#readContract).  
+As explained above, there are two possibilities to compute the mask one is by doing 
+
+Substract 0 1: 296 steps
+Substract 0 7: 296 steps
+Substract 7 7: 296 steps
+Multiplication 0-1: 296 steps
+Multiplication 0-7: 296 steps
+Multiplication 7-7: 296 steps
 
 ONGOING SECTION 
 
