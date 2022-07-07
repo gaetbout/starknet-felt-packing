@@ -52,6 +52,7 @@ One way would be to do:
 
       2 ^ 5 = 32 (1 00000) # Since the number is encoded on 5 bits
       32 - 1 = 31 (11111) # Make minus 1 to have the 5 bits set all to one 
+      2 ^ 5 = 32 (1 00000) # We do the power of 2 ^ (number of bits to skip= 5)
       31 . 32 = 992 (11111 00000) # We multiply 31 by 32 to add 5 zeros after.
 
 The other way would avoid making that mutliplication would be to 
@@ -87,6 +88,7 @@ One way would be to do:
 
       2 ^ 5 = 32 (1 00000) # Since the number is encoded on 5 bits
       32 - 1 = 31 (11111) # Make minus 1 to have the 5 bits set all to one 
+      2 ^ 5 = 32 (1 00000) # We do the power of 2 ^ (number of bits to skip= 5)
       31 . 32 = 992 (11111 00000) # We multiply 31 by 32 to add 5 zeros after.
 
 The other way would avoid making that mutliplication would be to 
@@ -131,6 +133,9 @@ As we can see the costs aren't linear but we can do better. Getting any power of
 Contract address: [0x014cceed3a4723314d2e26e45072898691c59f22f83865c84f1721406c66b5f1](https://goerli.voyager.online/contract/0x014cceed3a4723314d2e26e45072898691c59f22f83865c84f1721406c66b5f1#readContract).  
 As explained above, there are two possibilities to compute the mask one is by doing 
 
+Empty with 3 builtins: 250 steps
+Simple substract: 272
+Simple multiplication: 271 ==> more opti same amout of pow fetch but 1 operation less (one minus gone)
 Substract 0 1: 296 steps
 Substract 0 7: 296 steps
 Substract 7 7: 296 steps
