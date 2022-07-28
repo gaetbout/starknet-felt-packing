@@ -4,7 +4,7 @@ from contracts.bits_manipulation import external as bits_manipulation
 from starkware.cairo.common.alloc import alloc
 
 const BITS_SIZE = 7
-const MAX_PER_FELT = 35  # 251 // 7 = qutotient=35
+const MAX_PER_FELT = 35  # 251 // 7 = quotient=35
 
 @view
 func get_element_at{

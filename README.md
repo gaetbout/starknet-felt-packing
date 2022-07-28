@@ -5,9 +5,10 @@ Uint128, Uint256, Uint1024. Ok I get it... We  can do big integers.
 But why not going smaller, what about uint8, uint16, ...  
 
 The idea of this library is to be able to store multiple smaller felts into a 1 felt. As an example it is possible to store 62 felt of size 8 bits (0-255) into 1 felt that you'd store in a storage var. To show that this is working, I made an application that is existing [here](https://github.com/gaetbout/starknet-s-place) with a contract deployed on testnet and a webiste deployed on IPFS.  
-In the [examples folder](/contracts/examples) you have 2 examples on how this library can be used.  
-One is simply to encode an arbitrary number of uint7 into a felt (max 35 in that case).  
-The other file is done to show how to store multiple numbers not having all the same length of bits: modular storage. For that example, I picked the [IPV6 packet header](https://en.wikipedia.org/wiki/IPv6_packet). I removed the addresses because it was starting to be a lot of fields (also because a packet would then require to be encoded on two felts, see **Bits available**).
+In the [examples folder](/contracts/examples) you have 3 examples on how this library can be used.  
+[The first file](/contracts/examples/uint7_packed.cairo) is simply to encode an arbitrary number of uint7 into a felt (max 35 in that case).  
+[The second file](/contracts/examples/modular_storage.cairo) file is done to show how to store multiple numbers not having all the same length of bits: modular storage. For that example, I picked the [IPV6 packet header](https://en.wikipedia.org/wiki/IPv6_packet). I removed the addresses because it was starting to be a lot of fields (also because a packet would then require to be encoded on two felts, see **Bits available**).  
+[The third file](/contracts/examples/string_manipulation.cairo) is a file allowing you to manipulate string, you can for example use char_at to know which character is at which position (check the tests for more information). It also allows to update a string encoded on a single felt. Last but not least, it can also tell the size of a "string". 
 
 # Technical explanation
 ## Bits available
