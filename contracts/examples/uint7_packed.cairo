@@ -1,6 +1,6 @@
 %lang starknet
 from starkware.cairo.common.cairo_builtins import HashBuiltin, BitwiseBuiltin
-from contracts.bits_manipulation import external as bits_manipulation
+from contracts.lib.bits_manipulation import external as bits_manipulation
 from starkware.cairo.common.alloc import alloc
 
 const BITS_SIZE = 7

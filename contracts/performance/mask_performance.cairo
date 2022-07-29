@@ -1,6 +1,6 @@
 %lang starknet
 from starkware.cairo.common.cairo_builtins import HashBuiltin
-from contracts.pow2 import pow2
+from contracts.lib.pow2 import pow2
 
 @view
 func mask_using_substraction{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr}(

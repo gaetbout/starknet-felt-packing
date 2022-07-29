@@ -1,6 +1,6 @@
 %lang starknet
 from starkware.cairo.common.cairo_builtins import HashBuiltin, BitwiseBuiltin
-from contracts.bits_manipulation import external as bits_manipulation
+from contracts.lib.bits_manipulation import external as bits_manipulation
 
 const VERSION_SIZE = 4
 const TRAFFIC_CLASS_SIZE = 8

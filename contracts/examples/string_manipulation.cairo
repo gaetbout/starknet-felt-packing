@@ -1,9 +1,9 @@
 %lang starknet
 from starkware.cairo.common.cairo_builtins import HashBuiltin, BitwiseBuiltin
-from contracts.bits_manipulation import external as bits_manipulation
+from contracts.lib.bits_manipulation import external as bits_manipulation
 from starkware.cairo.common.alloc import alloc
 from starkware.cairo.common.math_cmp import is_le_felt
-from contracts.pow2 import pow2
+from contracts.lib.pow2 import pow2
 
 # This contract could also be called "uint8_packed.cairo"
 const CHARACTER_SIZE = 8

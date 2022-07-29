@@ -1,7 +1,7 @@
 %lang starknet
 from starkware.cairo.common.cairo_builtins import HashBuiltin, BitwiseBuiltin
 from starkware.cairo.common.pow import pow
-from contracts.pow2 import pow2
+from contracts.lib.pow2 import pow2
 
 @view
 func simple_pow{range_check_ptr}(input : felt) -> (response : felt):
