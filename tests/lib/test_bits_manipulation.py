@@ -16,20 +16,20 @@ async def contract(starknet):
 async def test_actual_set_element_at(contract):
     pow = 1
     for x in range(251):
-        execution_info = await contract.actual_set_element_at(0,x,1,1).invoke()
+        execution_info = await contract.actual_set_element_at(0,x,1,1).execute()
         assert execution_info.result.response == pow
         pow = pow * 2 
 
 @pytest.mark.asyncio
 async def test_actual_get_element_at_1(contract):
     for x in range(251):
-        execution_info = await contract.actual_get_element_at(3618502788666131106986593281521497120414687020801267626233049500247285301247,x, 1).invoke()
+        execution_info = await contract.actual_get_element_at(3618502788666131106986593281521497120414687020801267626233049500247285301247,x, 1).execute()
         assert execution_info.result.response == 1
     
 @pytest.mark.asyncio
 async def test_actual_get_element_at_0(contract):
     for x in range(251):
-        execution_info = await contract.actual_get_element_at(0,x,1).invoke()
+        execution_info = await contract.actual_get_element_at(0,x,1).execute()
         assert execution_info.result.response == 0
     
 

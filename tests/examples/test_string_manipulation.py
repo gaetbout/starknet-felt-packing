@@ -22,7 +22,7 @@ async def contract(starknet):
     ('Bonjour',7,''),
 ])
 async def test_char_at(contract, input, position, result):
-    execution_info = await contract.char_at(str_to_felt(input), position).invoke()
+    execution_info = await contract.char_at(str_to_felt(input), position).execute()
     assert execution_info.result.response == str_to_felt(result)
 
 @pytest.mark.asyncio
@@ -37,7 +37,7 @@ async def test_char_at(contract, input, position, result):
     ('Bonjour',7,'0', '0Bonjour'),
 ])
 async def test_set_character_at(contract, input, position, element, response):
-    execution_info = await contract.set_character_at(str_to_felt(input), position,str_to_felt(element)).invoke()
+    execution_info = await contract.set_character_at(str_to_felt(input), position,str_to_felt(element)).execute()
     assert execution_info.result.response == str_to_felt(response)
 
 
@@ -55,7 +55,7 @@ async def test_set_character_at(contract, input, position, element, response):
     
 ])
 async def test_length(contract, input, length):
-    execution_info = await contract.length(str_to_felt(input)).invoke()
+    execution_info = await contract.length(str_to_felt(input)).execute()
     assert execution_info.result.length == length
 
 def str_to_felt(text):

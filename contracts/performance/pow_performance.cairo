@@ -4,14 +4,14 @@ from starkware.cairo.common.pow import pow
 from contracts.lib.pow2 import pow2
 
 @view
-func simple_pow{range_check_ptr}(input : felt) -> (response : felt):
-    return pow(2, input)
-end
+func simple_pow{range_check_ptr}(input: felt) -> (response: felt) {
+    return pow(2, input);
+}
 
 @view
-func get_pow{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr}(input : felt) -> (
-    response : felt
-):
-    let (res) = pow2(input)
-    return (res)
-end
+func get_pow{syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, range_check_ptr}(input: felt) -> (
+    response: felt
+) {
+    let (res) = pow2(input);
+    return (res,);
+}

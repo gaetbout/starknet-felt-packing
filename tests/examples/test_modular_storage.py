@@ -14,27 +14,27 @@ async def contract(starknet):
   
 @pytest.mark.asyncio
 async def test_encode_packet_version_too_big(contract):
-    await assert_revert(contract.encode_packet_header(16, 1, 1, 1, 1, 1).invoke(), "Error felt too big")
+    await assert_revert(contract.encode_packet_header(16, 1, 1, 1, 1, 1).execute(), "Error felt too big")
   
 @pytest.mark.asyncio
 async def test_encode_packet_traffic_class_too_big(contract):
-    await assert_revert(contract.encode_packet_header(1, 256, 1, 1, 1, 1).invoke(), "Error felt too big")
+    await assert_revert(contract.encode_packet_header(1, 256, 1, 1, 1, 1).execute(), "Error felt too big")
   
 @pytest.mark.asyncio
 async def test_encode_packet_flow_label_too_big(contract):
-    await assert_revert(contract.encode_packet_header(1, 1, 1048576, 1, 1, 1).invoke(), "Error felt too big")
+    await assert_revert(contract.encode_packet_header(1, 1, 1048576, 1, 1, 1).execute(), "Error felt too big")
   
 @pytest.mark.asyncio
 async def test_encode_packet_payload_length_too_big(contract):
-    await assert_revert(contract.encode_packet_header(1, 1, 1, 65536, 1, 1).invoke(), "Error felt too big")
+    await assert_revert(contract.encode_packet_header(1, 1, 1, 65536, 1, 1).execute(), "Error felt too big")
   
 @pytest.mark.asyncio
 async def test_encode_packet_next_header_too_big(contract):
-    await assert_revert(contract.encode_packet_header(1, 1, 1, 1, 256, 1).invoke(), "Error felt too big")
+    await assert_revert(contract.encode_packet_header(1, 1, 1, 1, 256, 1).execute(), "Error felt too big")
   
 @pytest.mark.asyncio
 async def test_encode_packet_hop_limit_too_big(contract):
-    await assert_revert(contract.encode_packet_header(1, 1, 1, 1, 1, 256).invoke(), "Error felt too big")
+    await assert_revert(contract.encode_packet_header(1, 1, 1, 1, 1, 256).execute(), "Error felt too big")
 
 @pytest.mark.asyncio
 @pytest.mark.parametrize("version, traffic_class, flow_label, payload_length, next_header, hop_limit, result",[
@@ -43,7 +43,7 @@ async def test_encode_packet_hop_limit_too_big(contract):
     (15, 255, 1048575, 65535, 255, 255, 18446744073709551615),
 ])
 async def test_encode_packet_header(contract, version, traffic_class, flow_label, payload_length, next_header, hop_limit, result):
-    execution_info = await contract.encode_packet_header(version, traffic_class, flow_label, payload_length, next_header, hop_limit).invoke()
+    execution_info = await contract.encode_packet_header(version, traffic_class, flow_label, payload_length, next_header, hop_limit).execute()
     assert execution_info.result.response == result
 
 @pytest.mark.asyncio
@@ -53,6 +53,6 @@ async def test_encode_packet_header(contract, version, traffic_class, flow_label
     (18446744073709551615, 15, 255, 1048575, 65535, 255, 255),
 ])
 async def test_decode_packet_header(contract, input, version, traffic_class, flow_label, payload_length, next_header, hop_limit):
-    execution_info = await contract.decode_packet_header(input).invoke()
+    execution_info = await contract.decode_packet_header(input).execute()
     assert execution_info.result == (version, traffic_class, flow_label, payload_length, next_header, hop_limit)
 

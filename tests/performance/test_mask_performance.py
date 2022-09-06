@@ -24,8 +24,8 @@ async def contract(starknet):
     (0, 251, 3618502788666131106986593281521497120414687020801267626233049500247285301247),
 ])
 async def test_mask_methods(contract, position, size, result):
-    execution_info1 = await contract.mask_using_substraction(position, size).invoke()
-    execution_info2 = await contract.mask_using_multiplication(position, size).invoke()
+    execution_info1 = await contract.mask_using_substraction(position, size).execute()
+    execution_info2 = await contract.mask_using_multiplication(position, size).execute()
     assert execution_info1.result.mask == result
     assert execution_info2.result.mask == result
 
@@ -40,7 +40,7 @@ async def test_mask_methods(contract, position, size, result):
     (238,56097394306713702464269695648587662877522613725800901920360996891040677888)
 ])
 async def test_mask_methods_7(contract, position, result):
-    execution_info1 = await contract.mask_using_substraction(position, 7).invoke()
-    execution_info2 = await contract.mask_using_multiplication(position, 7).invoke()
+    execution_info1 = await contract.mask_using_substraction(position, 7).execute()
+    execution_info2 = await contract.mask_using_multiplication(position, 7).execute()
     assert execution_info1.result.mask == result
     assert execution_info2.result.mask == result
