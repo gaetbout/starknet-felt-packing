@@ -5,7 +5,7 @@ from starkware.cairo.common.bitwise import bitwise_and, bitwise_or, ALL_ONES
 from starkware.cairo.common.math_cmp import is_le
 from contracts.lib.pow2 import pow2
 
-// Don't like this ay of doign but it makes the tests passing, there should be a way in pytest to make it cleaner
+// Don't like this way of doing but it makes the tests pass, there should be a way in pytest to make it cleaner
 @view
 func actual_get_element_at{
     bitwise_ptr: BitwiseBuiltin*, syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, range_check_ptr
