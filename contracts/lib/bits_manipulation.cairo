@@ -47,6 +47,27 @@ func actual_set_element_at{
     return (response,);
 }
 
+// @notice Will return the a new felt with the felt encoded at a certain position on a certain number of bits
+// @dev This metod can fail.
+//      It has an added security that will make sure that the left part of the input is empty using the most significant bit.
+// @param input: The felt from which it needs to be included in
+// @param at: The position of the element that needs to be extracted, starts a 0
+// @param number_of_bits: The size of the element that needs to be extracted
+// @param element: The element that needs to be encoded
+// @return response: The new felt containing the encoded value a the given position on the given number of bits
+@view
+func actual_safe_set_element_at{
+    bitwise_ptr: BitwiseBuiltin*, syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, range_check_ptr
+}(input: felt, at: felt, number_of_bits: felt, element: felt) -> (response: felt) {
+    internal.assert_valid_felt(element, number_of_bits);
+    let (mask) = internal.generate_set_mask(at, number_of_bits);
+    let (masked_intermediate_response) = bitwise_and(mask, input);
+    let (multiplier) = pow2(at);
+    let multiplied_element = element * multiplier;
+    let (response) = bitwise_or(masked_intermediate_response, multiplied_element);
+    return (response,);
+}
+
 namespace internal {
     // @notice Will generate a bit mask to extract a felt within another felt
     // @dev Will fail if the position given would make it out of the 251 available bits
