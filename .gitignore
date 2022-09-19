@@ -1,7 +1,8 @@
 node.json
 accounts.json
 artifacts
-*__pycache__
+*/__pycache__
+__pycache__
 goerli.deployments.txt
 .vscode
 

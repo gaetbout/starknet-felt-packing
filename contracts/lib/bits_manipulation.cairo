@@ -5,11 +5,11 @@ from starkware.cairo.common.bitwise import bitwise_and, bitwise_or, ALL_ONES
 from starkware.cairo.common.math_cmp import is_le
 from contracts.lib.pow2 import pow2
 
-
 //
 // @title Bits Manipulation
 // @notice Manipulate the bits to be able to encode and decode felts within another felt, for more info refer to the README
 //
+
 // @notice Will return the number encoded at for a certain number of bits
 // @dev This metod can fail
 // @param input: The felt from which it needs to be extracted from
@@ -18,10 +18,7 @@ from contracts.lib.pow2 import pow2
 // @return response: The felt that was extracted at the position asked, on the number of bits asked
 @view
 func actual_get_element_at{
-    bitwise_ptr: BitwiseBuiltin*,
-    syscall_ptr: felt*,
-    pedersen_ptr: HashBuiltin*,
-    range_check_ptr,
+    bitwise_ptr: BitwiseBuiltin*, syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, range_check_ptr
 }(input: felt, at: felt, number_of_bits: felt) -> (response: felt) {
     let (mask) = internal.generate_get_mask(at, number_of_bits);
     let (masked_response) = bitwise_and(mask, input);
@@ -39,10 +36,7 @@ func actual_get_element_at{
 // @return response: The new felt containing the encoded value a the given position on the given number of bits
 @view
 func actual_set_element_at{
-    bitwise_ptr: BitwiseBuiltin*,
-    syscall_ptr: felt*,
-    pedersen_ptr: HashBuiltin*,
-    range_check_ptr,
+    bitwise_ptr: BitwiseBuiltin*, syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, range_check_ptr
 }(input: felt, at: felt, number_of_bits: felt, element: felt) -> (response: felt) {
     internal.assert_valid_felt(element, number_of_bits);
     let (mask) = internal.generate_set_mask(at, number_of_bits);
