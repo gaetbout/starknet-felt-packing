@@ -1,6 +1,6 @@
 %lang starknet
 from starkware.cairo.common.cairo_builtins import HashBuiltin, BitwiseBuiltin
-from contracts.lib.bits_manipulation import external as bits_manipulation
+from contracts.lib.bits_manipulation import actual_set_element_at, actual_get_element_at
 from starkware.cairo.common.alloc import alloc
 
 const BITS_SIZE = 7;
@@ -10,14 +10,14 @@ const MAX_PER_FELT = 35;  // 251 // 7 = quotient=35
 func get_element_at{
     bitwise_ptr: BitwiseBuiltin*, syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, range_check_ptr
 }(input: felt, at: felt) -> (response: felt) {
-    return bits_manipulation.actual_get_element_at(input, at * BITS_SIZE, BITS_SIZE);
+    return actual_get_element_at(input, at * BITS_SIZE, BITS_SIZE);
 }
 
 @view
 func set_element_at{
     bitwise_ptr: BitwiseBuiltin*, syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, range_check_ptr
 }(input: felt, at: felt, element: felt) -> (response: felt) {
-    return bits_manipulation.actual_set_element_at(input, at * BITS_SIZE, BITS_SIZE, element);
+    return actual_set_element_at(input, at * BITS_SIZE, BITS_SIZE, element);
 }
 
 @view
@@ -42,9 +42,7 @@ func decompose_recursive{
     if (arr_len == MAX_PER_FELT) {
         return (arr_len, arr);
     }
-    let (current_value) = bits_manipulation.actual_get_element_at(
-        felt_to_decompose, arr_len * BITS_SIZE, BITS_SIZE
-    );
+    let (current_value) = actual_get_element_at(felt_to_decompose, arr_len * BITS_SIZE, BITS_SIZE);
     assert arr[arr_len] = current_value;
     return decompose_recursive(felt_to_decompose, arr_len + 1, arr);
 }

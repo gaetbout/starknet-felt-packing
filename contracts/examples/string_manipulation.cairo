@@ -1,6 +1,6 @@
 %lang starknet
 from starkware.cairo.common.cairo_builtins import HashBuiltin, BitwiseBuiltin
-from contracts.lib.bits_manipulation import external as bits_manipulation
+from contracts.lib.bits_manipulation import actual_set_element_at, actual_get_element_at
 from starkware.cairo.common.alloc import alloc
 from starkware.cairo.common.math_cmp import is_le_felt
 from contracts.lib.pow2 import pow2
@@ -13,16 +13,14 @@ const MAX_PER_FELT = 31;  // 251 // 8 = quotient=31
 func char_at{
     bitwise_ptr: BitwiseBuiltin*, syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, range_check_ptr
 }(input: felt, at: felt) -> (response: felt) {
-    return bits_manipulation.actual_get_element_at(input, at * CHARACTER_SIZE, CHARACTER_SIZE);
+    return actual_get_element_at(input, at * CHARACTER_SIZE, CHARACTER_SIZE);
 }
 
 @view
 func set_character_at{
     bitwise_ptr: BitwiseBuiltin*, syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, range_check_ptr
 }(input: felt, at: felt, element: felt) -> (response: felt) {
-    return bits_manipulation.actual_set_element_at(
-        input, at * CHARACTER_SIZE, CHARACTER_SIZE, element
-    );
+    return actual_set_element_at(input, at * CHARACTER_SIZE, CHARACTER_SIZE, element);
 }
 
 @view

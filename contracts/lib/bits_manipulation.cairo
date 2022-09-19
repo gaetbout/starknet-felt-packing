@@ -5,67 +5,52 @@ from starkware.cairo.common.bitwise import bitwise_and, bitwise_or, ALL_ONES
 from starkware.cairo.common.math_cmp import is_le
 from contracts.lib.pow2 import pow2
 
-// Don't like this way of doing but it makes the tests pass, there should be a way in pytest to make it cleaner
-@view
-func actual_get_element_at{
-    bitwise_ptr: BitwiseBuiltin*, syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, range_check_ptr
-}(input: felt, at: felt, number_of_bits: felt) -> (response: felt) {
-    return external.actual_get_element_at(input, at, number_of_bits);
-}
 
-@view
-func actual_set_element_at{
-    bitwise_ptr: BitwiseBuiltin*, syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, range_check_ptr
-}(input: felt, at: felt, number_of_bits: felt, element: felt) -> (response: felt) {
-    return external.actual_set_element_at(input, at, number_of_bits, element);
-}
 //
 // @title Bits Manipulation
 // @notice Manipulate the bits to be able to encode and decode felts within another felt, for more info refer to the README
 //
-namespace external {
-    // @notice Will return the number encoded at for a certain number of bits
-    // @dev This metod can fail
-    // @param input: The felt from which it needs to be extracted from
-    // @param at: The position of the element that needs to be extracted, starts a 0
-    // @param number_of_bits: The size of the element that needs to be extracted
-    // @return response: The felt that was extracted at the position asked, on the number of bits asked
-    @view
-    func actual_get_element_at{
-        bitwise_ptr: BitwiseBuiltin*,
-        syscall_ptr: felt*,
-        pedersen_ptr: HashBuiltin*,
-        range_check_ptr,
-    }(input: felt, at: felt, number_of_bits: felt) -> (response: felt) {
-        let (mask) = internal.generate_get_mask(at, number_of_bits);
-        let (masked_response) = bitwise_and(mask, input);
-        let (divider) = pow2(at);
-        let response = masked_response / divider;
-        return (response,);
-    }
+// @notice Will return the number encoded at for a certain number of bits
+// @dev This metod can fail
+// @param input: The felt from which it needs to be extracted from
+// @param at: The position of the element that needs to be extracted, starts a 0
+// @param number_of_bits: The size of the element that needs to be extracted
+// @return response: The felt that was extracted at the position asked, on the number of bits asked
+@view
+func actual_get_element_at{
+    bitwise_ptr: BitwiseBuiltin*,
+    syscall_ptr: felt*,
+    pedersen_ptr: HashBuiltin*,
+    range_check_ptr,
+}(input: felt, at: felt, number_of_bits: felt) -> (response: felt) {
+    let (mask) = internal.generate_get_mask(at, number_of_bits);
+    let (masked_response) = bitwise_and(mask, input);
+    let (divider) = pow2(at);
+    let response = masked_response / divider;
+    return (response,);
+}
 
-    // @notice Will return the a new felt with the felt encoded at a certain position on a certain number of bits
-    // @dev This metod can fail
-    // @param input: The felt from which it needs to be included in
-    // @param at: The position of the element that needs to be extracted, starts a 0
-    // @param number_of_bits: The size of the element that needs to be extracted
-    // @param element: The element that needs to be encoded
-    // @return response: The new felt containing the encoded value a the given position on the given number of bits
-    @view
-    func actual_set_element_at{
-        bitwise_ptr: BitwiseBuiltin*,
-        syscall_ptr: felt*,
-        pedersen_ptr: HashBuiltin*,
-        range_check_ptr,
-    }(input: felt, at: felt, number_of_bits: felt, element: felt) -> (response: felt) {
-        internal.assert_valid_felt(element, number_of_bits);
-        let (mask) = internal.generate_set_mask(at, number_of_bits);
-        let (masked_intermediate_response) = bitwise_and(mask, input);
-        let (multiplier) = pow2(at);
-        let multiplied_element = element * multiplier;
-        let (response) = bitwise_or(masked_intermediate_response, multiplied_element);
-        return (response,);
-    }
+// @notice Will return the a new felt with the felt encoded at a certain position on a certain number of bits
+// @dev This metod can fail
+// @param input: The felt from which it needs to be included in
+// @param at: The position of the element that needs to be extracted, starts a 0
+// @param number_of_bits: The size of the element that needs to be extracted
+// @param element: The element that needs to be encoded
+// @return response: The new felt containing the encoded value a the given position on the given number of bits
+@view
+func actual_set_element_at{
+    bitwise_ptr: BitwiseBuiltin*,
+    syscall_ptr: felt*,
+    pedersen_ptr: HashBuiltin*,
+    range_check_ptr,
+}(input: felt, at: felt, number_of_bits: felt, element: felt) -> (response: felt) {
+    internal.assert_valid_felt(element, number_of_bits);
+    let (mask) = internal.generate_set_mask(at, number_of_bits);
+    let (masked_intermediate_response) = bitwise_and(mask, input);
+    let (multiplier) = pow2(at);
+    let multiplied_element = element * multiplier;
+    let (response) = bitwise_or(masked_intermediate_response, multiplied_element);
+    return (response,);
 }
 
 namespace internal {
