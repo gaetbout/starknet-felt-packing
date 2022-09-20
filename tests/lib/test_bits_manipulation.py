@@ -102,23 +102,6 @@ async def test_actual_get_element_at_0(contract):
 # async def test_generate_set_mask_7(contract, position, result):
 #     execution_info = await contract.generate_set_mask(position, 7).execute()
 #     assert execution_info.result.mask == result
-
-
-@pytest.mark.asyncio
-async def test_get_most_significant_bit_0(contract):
-        execution_info = await contract.get_most_significant_bit(0, 8).execute()
-        assert execution_info.result.bit_index == 0
-    
-
-@pytest.mark.asyncio
-async def test_get_most_significant_bit_all_ones(contract):
-        execution_info = await contract.get_most_significant_bit(3618502788666131106986593281521497120414687020801267626233049500247285301248, 8).execute()
-        assert execution_info.result.bit_index == 250
-
-@pytest.mark.asyncio
-async def test_get_most_significant_bit_all_ones_plus_one(contract):
-        execution_info = await contract.get_most_significant_bit(3618502788666131106986593281521497120414687020801267626233049500247285301249, 8).execute()
-        assert execution_info.result.bit_index == 250
     
 @pytest.mark.asyncio
 @pytest.mark.parametrize("at, number_of_bits, element, result",[
