@@ -1,7 +1,7 @@
 %lang starknet
 from starkware.cairo.common.cairo_builtins import HashBuiltin, BitwiseBuiltin
 from starkware.cairo.common.bool import TRUE
-from starkware.cairo.common.bitwise import bitwise_and, bitwise_or, ALL_ONES
+from starkware.cairo.common.bitwise import bitwise_and, ALL_ONES
 from starkware.cairo.common.math_cmp import is_le
 from contracts.lib.pow2 import pow2
 
@@ -41,7 +41,6 @@ func actual_set_element_at{
     internal.assert_valid_felt(element, number_of_bits);
     let (mask) = internal.generate_set_mask(at, number_of_bits);
     let (masked_intermediate_response) = bitwise_and(mask, input);
-
     return internal.unsafe_set_element_at(masked_intermediate_response, at, element);
 }
 
@@ -146,34 +145,4 @@ namespace internal {
         }
         return ();
     }
-}
-
-// @notice Will get the most significant bit related for the given input
-// @dev Will fail if the position is too big +
-// @param input: The number for which we need to find the most sigificant bit
-// @param number_of_bits: the number of bits on which each element is encoded
-// @return bit_index: the index of the most significant bit [0, 250]
-@view
-func get_most_significant_bit{syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, range_check_ptr}(
-    input: felt, number_of_bits: felt
-) -> (bit_index: felt) {
-    if (input == 0) {
-        return (bit_index=0);
-    }
-    let is_bigger_than = is_le(ALL_ONES, input);
-    if (is_bigger_than == TRUE) {
-        return (bit_index=250);
-    }
-    return get_most_significant_bit_recursive(input, number_of_bits, 0);
-}
-
-func get_most_significant_bit_recursive{
-    syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, range_check_ptr
-}(input: felt, number_of_bits: felt, current_index: felt) -> (bit_index: felt) {
-    let is_bigger = is_le(250, current_index * number_of_bits);
-    if (is_bigger == TRUE) {
-        return (bit_index=250);
-    }
-    // TODO finish here
-    return (bit_index=4);
 }

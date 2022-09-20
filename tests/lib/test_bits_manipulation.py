@@ -132,7 +132,6 @@ async def test_get_most_significant_bit_all_ones_plus_one(contract):
     (10, 10, 2, 2048),
     (30, 10, 2, 2147483648),
 
-
     (0, 2, 3, 3),
     (2, 2, 3, 12),
     (10, 10, 3, 3072),
@@ -146,9 +145,9 @@ async def test_quick_set_element_at_input_zero(contract, at, number_of_bits, ele
 
 @pytest.mark.asyncio
 @pytest.mark.parametrize("input, at, number_of_bits, element, result",[
-    
     (3568, 0, 4, 13, 3581), # 1101 1111 0000 
     (3343, 4, 4, 9, 3487), # 1101 0000 1111 
+    (1038090431, 10, 10, 819, 1038929087), # 1111011110 0000000000 0010111111
 
 ])
 async def test_quick_set_element_at_input_with_valid_holes(contract, input, at, number_of_bits, element, result):
