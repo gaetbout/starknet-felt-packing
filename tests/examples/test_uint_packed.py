@@ -34,17 +34,17 @@ async def test_get_element_at(contract, input, position, result):
 
 
 @pytest.mark.asyncio
-@pytest.mark.parametrize("input, position, element, result",[
-    (0,0,127,127),
-    (0,1,127,16256),
-    (0,5,127,4363686772736),
-    (0,10,127,149935135831111235534848),
-    (0,20,127,177012165013336821185939763789146369453719552),
-    (0,30,127,208979078779793167353681086184783514132807454935464642645273346048),
-    (0,34,127,56097394306713702464269695648587662877522613725800901920360996891040677888),
+@pytest.mark.parametrize("position, element, result",[
+    (0,127,127),
+    (1,127,16256),
+    (5,127,4363686772736),
+    (10,127,149935135831111235534848),
+    (20,127,177012165013336821185939763789146369453719552),
+    (30,127,208979078779793167353681086184783514132807454935464642645273346048),
+    (34,127,56097394306713702464269695648587662877522613725800901920360996891040677888),
 ])
-async def test_set_element_at(contract, input, position, element, result):
-    execution_info = await contract.set_element_at(input, position, element).execute()
+async def test_set_element_at_input_zero(contract, position, element, result):
+    execution_info = await contract.set_element_at(0, position, element).execute()
     assert execution_info.result.response == result
 
 @pytest.mark.asyncio

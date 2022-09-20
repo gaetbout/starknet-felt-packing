@@ -23,10 +23,10 @@ To achieve that you need a mask that will look like this 1111 0000 1111 and make
       _________________
       10111 00000 11011
 Now that we reset that part, we can proceed with setting the new number: 24 (11000). To do so we first need to do some math to add some zeros after and have: 11000 00000. To do so we just need to multiply 24 by 2 <sup>5</sup> (why 5? because it is the number of zeros we have to add).  
-24 . (2<sup>5</sup>) = 24 . 32 = 768 (11000 00000). Once we have this number we can proceed to the last part and perform the bitwise operation **or (|)**:
+24 . (2<sup>5</sup>) = 24 . 32 = 768 (11000 00000). Once we have this number we can proceed to the last part and add this number to the previous number obtained (the one of the & the bitwise operation).
 
       10111 00000 11011
-    | 00000 11000 00000
+    + 00000 11000 00000
       _________________
       10111 11000 11011
 This result in the new felt that can be returned to the user: 24347 (10111 11000 11011) which encodes 23 (10111), 24 (11000) and 27 (11011).

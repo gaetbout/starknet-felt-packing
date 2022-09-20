@@ -11,7 +11,7 @@ from contracts.lib.pow2 import pow2
 //
 
 // @notice Will return the number encoded at for a certain number of bits
-// @dev This metod can fail
+// @dev This method can fail
 // @param input: The felt from which it needs to be extracted from
 // @param at: The position of the element that needs to be extracted, starts a 0
 // @param number_of_bits: The size of the element that needs to be extracted
@@ -28,10 +28,10 @@ func actual_get_element_at{
 }
 
 // @notice Will return the a new felt with the felt encoded at a certain position on a certain number of bits
-// @dev This metod can fail
+// @dev This method can fail
 // @param input: The felt from which it needs to be included in
-// @param at: The position of the element that needs to be extracted, starts a 0
-// @param number_of_bits: The size of the element that needs to be extracted
+// @param at: The position of the element that needs to be added, starts a 0
+// @param number_of_bits: The size of the element that needs to be added
 // @param element: The element that needs to be encoded
 // @return response: The new felt containing the encoded value a the given position on the given number of bits
 @view
@@ -41,34 +41,44 @@ func actual_set_element_at{
     internal.assert_valid_felt(element, number_of_bits);
     let (mask) = internal.generate_set_mask(at, number_of_bits);
     let (masked_intermediate_response) = bitwise_and(mask, input);
-    let (multiplier) = pow2(at);
-    let multiplied_element = element * multiplier;
-    let (response) = bitwise_or(masked_intermediate_response, multiplied_element);
-    return (response,);
+
+    return internal.unsafe_set_element_at(masked_intermediate_response, at, element);
 }
 
 // @notice Will return the a new felt with the felt encoded at a certain position on a certain number of bits
-// @dev This metod can fail.
-//      It has an added security that will make sure that the left part of the input is empty using the most significant bit.
+//          Use with caution only when you are sure that the spot you are putting the new field element is full of zeros
+//          It will basically skip the entire MASK part
+// @dev This method can fail
 // @param input: The felt from which it needs to be included in
 // @param at: The position of the element that needs to be extracted, starts a 0
 // @param number_of_bits: The size of the element that needs to be extracted
 // @param element: The element that needs to be encoded
 // @return response: The new felt containing the encoded value a the given position on the given number of bits
 @view
-func actual_safe_set_element_at{
+func quick_set_element_at{
     bitwise_ptr: BitwiseBuiltin*, syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, range_check_ptr
 }(input: felt, at: felt, number_of_bits: felt, element: felt) -> (response: felt) {
     internal.assert_valid_felt(element, number_of_bits);
-    let (mask) = internal.generate_set_mask(at, number_of_bits);
-    let (masked_intermediate_response) = bitwise_and(mask, input);
-    let (multiplier) = pow2(at);
-    let multiplied_element = element * multiplier;
-    let (response) = bitwise_or(masked_intermediate_response, multiplied_element);
-    return (response,);
+    return internal.unsafe_set_element_at(input, at, element);
 }
 
 namespace internal {
+    // @notice Will set the input at tjhe given position
+    // @dev Cannot fail
+    // @param position: The position of the element that needs to be set, starts a 0
+    // @param element: The element that needs to be encoded
+    // @return response: The new felt containing the encoded value a the given position on the given number of bits
+    func unsafe_set_element_at{
+        bitwise_ptr: BitwiseBuiltin*,
+        syscall_ptr: felt*,
+        pedersen_ptr: HashBuiltin*,
+        range_check_ptr,
+    }(input: felt, at: felt, element: felt) -> (response: felt) {
+        let (multiplier) = pow2(at);
+        let multiplied_element = element * multiplier;
+        return (response=input + multiplied_element);
+    }
+
     // @notice Will generate a bit mask to extract a felt within another felt
     // @dev Will fail if the position given would make it out of the 251 available bits
     // @param position: The position of the element that needs to be extracted, starts a 0
@@ -83,7 +93,7 @@ namespace internal {
     // @notice Will generate a bit mask to be able to insert a felt within another felt
     // @dev Will fail if the position given would make it out of the 251 available bits
     // @param position: The position of the element that needs to be inserted, starts a 0
-    // @param number_of_bits: the max number of bits on which the element will have to be encoded
+    // @param number_of_bits: the number of bits on which each element is encoded
     // @return mask: the "set" mask corresponding to the position and the number of bits
     func generate_set_mask{syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, range_check_ptr}(
         position: felt, number_of_bits: felt
@@ -96,7 +106,7 @@ namespace internal {
     // @notice Will generate the mask part that is common to set_mask and get_mask
     // @dev Will fail if the position given would make it out of the 251 available bits
     // @param position: The position of the element that needs to be inserted, starts a 0
-    // @param number_of_bits: the max number of bits on which the element will have to be encoded
+    // @param number_of_bits: the number of bits on which each element is encoded
     // @return mask: the mask corresponding to the position and the number of bits
     func generate_mask{syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, range_check_ptr}(
         position: felt, number_of_bits: felt
@@ -111,7 +121,7 @@ namespace internal {
     // @notice Will check that the given element isn't to big to be stored
     // @dev Will fail if the felt is too big, which is relative to number_of_bits
     // @param element: the element that needs to be checked
-    // @param number_of_bits: the max number of bits on which the element will have to be encoded
+    // @param number_of_bits: the number of bits on which each element is encoded
     func assert_valid_felt{syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, range_check_ptr}(
         element: felt, number_of_bits: felt
     ) {
@@ -126,7 +136,7 @@ namespace internal {
     // @notice Will check that the given position finumber_of_bitsts within the 251 bits available
     // @dev Will fail if the position is too big +
     // @param position: The position of the element, starts a 0
-    // @param number_of_bits: the max number of bits on which the element will have to be encoded
+    // @param number_of_bits: the number of bits on which each element is encoded
     func assert_within_range{syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, range_check_ptr}(
         position: felt, number_of_bits: felt
     ) {
@@ -136,4 +146,34 @@ namespace internal {
         }
         return ();
     }
+}
+
+// @notice Will get the most significant bit related for the given input
+// @dev Will fail if the position is too big +
+// @param input: The number for which we need to find the most sigificant bit
+// @param number_of_bits: the number of bits on which each element is encoded
+// @return bit_index: the index of the most significant bit [0, 250]
+@view
+func get_most_significant_bit{syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, range_check_ptr}(
+    input: felt, number_of_bits: felt
+) -> (bit_index: felt) {
+    if (input == 0) {
+        return (bit_index=0);
+    }
+    let is_bigger_than = is_le(ALL_ONES, input);
+    if (is_bigger_than == TRUE) {
+        return (bit_index=250);
+    }
+    return get_most_significant_bit_recursive(input, number_of_bits, 0);
+}
+
+func get_most_significant_bit_recursive{
+    syscall_ptr: felt*, pedersen_ptr: HashBuiltin*, range_check_ptr
+}(input: felt, number_of_bits: felt, current_index: felt) -> (bit_index: felt) {
+    let is_bigger = is_le(250, current_index * number_of_bits);
+    if (is_bigger == TRUE) {
+        return (bit_index=250);
+    }
+    // TODO finish here
+    return (bit_index=4);
 }

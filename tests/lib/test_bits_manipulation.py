@@ -31,7 +31,7 @@ async def test_actual_get_element_at_0(contract):
     for x in range(251):
         execution_info = await contract.actual_get_element_at(0,x,1).execute()
         assert execution_info.result.response == 0
-    
+
 
 # To run this test, please add the @view to generate_get_mask
 # @pytest.mark.asyncio
@@ -49,7 +49,7 @@ async def test_actual_get_element_at_0(contract):
 #     (0, 251, 3618502788666131106986593281521497120414687020801267626233049500247285301247),
 # ])
 # async def test_generate_get_mask(contract, position, size, result):
-#     execution_info = await contract.generate_get_mask(position, size).invoke()
+#     execution_info = await contract.generate_get_mask(position, size).execute()
 #     assert execution_info.result.mask == result
 
 # To run this test, please add the @view to generate_get_mask
@@ -64,7 +64,7 @@ async def test_actual_get_element_at_0(contract):
 #     (238,56097394306713702464269695648587662877522613725800901920360996891040677888)
 # ])
 # async def test_generate_get_mask_7(contract, position, result):
-#     execution_info = await contract.generate_get_mask(position, 7).invoke()
+#     execution_info = await contract.generate_get_mask(position, 7).execute()
 #     assert execution_info.result.mask == result
 
 
@@ -85,7 +85,7 @@ async def test_actual_get_element_at_0(contract):
 #     (0, 251, 0),
 # ])
 # async def test_generate_set_mask(contract, position, size, result):
-#     execution_info = await contract.generate_set_mask(position, size).invoke()
+#     execution_info = await contract.generate_set_mask(position, size).execute()
 #     assert execution_info.result.mask == result
 
 # To run this test, please add the @view to generate_set_mask
@@ -100,5 +100,57 @@ async def test_actual_get_element_at_0(contract):
 #     (238,3562405394359417404522323585872909457537164407075466724312688503356244623359)
 # ])
 # async def test_generate_set_mask_7(contract, position, result):
-#     execution_info = await contract.generate_set_mask(position, 7).invoke()
+#     execution_info = await contract.generate_set_mask(position, 7).execute()
 #     assert execution_info.result.mask == result
+
+
+@pytest.mark.asyncio
+async def test_get_most_significant_bit_0(contract):
+        execution_info = await contract.get_most_significant_bit(0, 8).execute()
+        assert execution_info.result.bit_index == 0
+    
+
+@pytest.mark.asyncio
+async def test_get_most_significant_bit_all_ones(contract):
+        execution_info = await contract.get_most_significant_bit(3618502788666131106986593281521497120414687020801267626233049500247285301248, 8).execute()
+        assert execution_info.result.bit_index == 250
+
+@pytest.mark.asyncio
+async def test_get_most_significant_bit_all_ones_plus_one(contract):
+        execution_info = await contract.get_most_significant_bit(3618502788666131106986593281521497120414687020801267626233049500247285301249, 8).execute()
+        assert execution_info.result.bit_index == 250
+    
+@pytest.mark.asyncio
+@pytest.mark.parametrize("at, number_of_bits, element, result",[
+    (0, 1, 1, 1),
+    (1, 1, 1, 2),
+    (10, 10, 1, 1024),
+    (30, 10, 1, 1073741824),
+    
+    (0, 2, 2, 2),
+    (2, 2, 2, 8),
+    (10, 10, 2, 2048),
+    (30, 10, 2, 2147483648),
+
+
+    (0, 2, 3, 3),
+    (2, 2, 3, 12),
+    (10, 10, 3, 3072),
+    (30, 10, 3, 3221225472),
+
+
+])
+async def test_quick_set_element_at_input_zero(contract, at, number_of_bits, element, result):
+    execution_info = await contract.quick_set_element_at(0, at, number_of_bits, element).execute()
+    assert execution_info.result.response == result
+
+@pytest.mark.asyncio
+@pytest.mark.parametrize("input, at, number_of_bits, element, result",[
+    
+    (3568, 0, 4, 13, 3581), # 1101 1111 0000 
+    (3343, 4, 4, 9, 3487), # 1101 0000 1111 
+
+])
+async def test_quick_set_element_at_input_with_valid_holes(contract, input, at, number_of_bits, element, result):
+    execution_info = await contract.quick_set_element_at(input, at, number_of_bits, element).execute()
+    assert execution_info.result.response == result
